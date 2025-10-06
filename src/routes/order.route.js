@@ -5,9 +5,10 @@ const {createorder,getallorder,getorderbyid,updateorder,deleteorder,ordersummary
 
 router.post("/createorders",authMiddleware,createorder)
 router.get("/getallorders",authMiddleware,getallorder)
+router.get("/ordersummary",authMiddleware,ordersummary)
 router.get("/getorderbyid/:id",authMiddleware,getorderbyid)
 router.put("/updateorder/:id",authMiddleware,updateorder)
 router.delete("/deleteorder/:id",authMiddleware,deleteorder)
-router.get("/ordersummary",authMiddleware,ordersummary)
+
 
 module.exports = router

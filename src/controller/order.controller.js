@@ -55,7 +55,7 @@ async function createorder(req,res){
             subtotal,
           });
           
-          // Deduct stock
+          
           product.stock_quantity -= item.quantity;
           await product.save();
 
@@ -82,6 +82,9 @@ async function createorder(req,res){
 async function getallorder(req,res){
     try{
         const { status, from, to } = req.query;
+        console.log(`status is ${status}`)
+        console.log(`from is ${from}`)
+        console.log(`to is ${to}`)
         const parsedQueries = checkallorder.safeParse({status,from,to})
         if(!parsedQueries.success){
             return res.status(400).json({message : "Check the data and try again"})
@@ -89,14 +92,18 @@ async function getallorder(req,res){
 
 
         let { status: parsedStatus, from: parsedFrom, to: parsedTo } = parsedQueries.data;
-        if (parsedFrom && parsedTo) {
-          parsedFrom.setUTCHours(0, 0, 0, 0);
-          parsedTo.setUTCHours(23, 59, 59, 999);
+
+        let fromDate = parsedFrom ? new Date(parsedFrom) : null;
+        let toDate = parsedTo ? new Date(parsedTo) : null;
+
+        if (fromDate && toDate) {
+          fromDate.setUTCHours(0, 0, 0, 0);
+          toDate.setUTCHours(23, 59, 59, 999);
         }
-      
+      console.log(`from date is ${fromDate}`)
+        console.log(`to date is ${toDate}`)
 
-
-        if(parsedFrom >parsedTo){
+        if(fromDate >toDate){
             return res.status(400).json({
                 message:"Start Date cannot be greater than End Date"
             })
@@ -108,8 +115,8 @@ async function getallorder(req,res){
 
         let filter = {};
         if (parsedStatus) filter.orderStatus = parsedStatus;
-        if (parsedFrom  && parsedTo) {
-        filter.createdAt = { $gte: new Date(parsedFrom), $lte: new Date(parsedTo) };
+        if (fromDate  && toDate) {
+        filter.createdAt = { $gte: new Date(fromDate), $lte: new Date(toDate) };
         }
 
         const orders = await Order.find(filter)

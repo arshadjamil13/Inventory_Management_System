@@ -14,6 +14,7 @@ function authMiddleware  (req, res, next) {
    
     req.user_id = decoded.id; // attach user payload to request
     req.user_role = decoded.role
+    console.log("Middle how hit and now moving to next")
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: "Invalid or expired token" });

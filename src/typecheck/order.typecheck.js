@@ -18,7 +18,7 @@ const checkcreateorder = z.object({
 });
 
 
-const checkallorder = z.object({
+let checkallorder = z.object({
     status : z.enum(["pending", "completed", "cancelled"]).optional(),
     from : z.preprocess((val) => {
         if (typeof val === "string") {
