@@ -19,7 +19,8 @@ const checkcreateorder = z.object({
 
 
 let checkallorder = z.object({
-    status : z.enum(["pending", "completed", "cancelled"]).optional(),
+    orderstatus : z.enum(["pending", "completed", "cancelled"]).optional(),
+    paymentstatus : z.enum(["pending","paid","failed","refunded"]).optional(),
     from : z.preprocess((val) => {
         if (typeof val === "string") {
           const date = new Date(val);

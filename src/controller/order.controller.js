@@ -81,17 +81,15 @@ async function createorder(req,res){
 
 async function getallorder(req,res){
     try{
-        const { status, from, to } = req.query;
-        console.log(`status is ${status}`)
-        console.log(`from is ${from}`)
-        console.log(`to is ${to}`)
-        const parsedQueries = checkallorder.safeParse({status,from,to})
+        const { orderstatus,paymentstatus, from, to } = req.query;
+        
+        const parsedQueries = checkallorder.safeParse({orderstatus,paymentstatus,from,to})
         if(!parsedQueries.success){
             return res.status(400).json({message : "Check the data and try again"})
         }
 
 
-        let { status: parsedStatus, from: parsedFrom, to: parsedTo } = parsedQueries.data;
+        let { orderstatus: parsedorderstatus,paymentstatus: parsedpaymentstatus, from: parsedFrom, to: parsedTo } = parsedQueries.data;
 
         let fromDate = parsedFrom ? new Date(parsedFrom) : null;
         let toDate = parsedTo ? new Date(parsedTo) : null;
@@ -100,8 +98,7 @@ async function getallorder(req,res){
           fromDate.setUTCHours(0, 0, 0, 0);
           toDate.setUTCHours(23, 59, 59, 999);
         }
-      console.log(`from date is ${fromDate}`)
-        console.log(`to date is ${toDate}`)
+    
 
         if(fromDate >toDate){
             return res.status(400).json({
@@ -114,7 +111,8 @@ async function getallorder(req,res){
         const skip = (page - 1) * limit;
 
         let filter = {};
-        if (parsedStatus) filter.orderStatus = parsedStatus;
+        if (parsedorderstatus) filter.orderStatus = parsedorderstatus;
+        if (parsedpaymentstatus) filter.paymentStatus = parsedpaymentstatus;
         if (fromDate  && toDate) {
         filter.createdAt = { $gte: new Date(fromDate), $lte: new Date(toDate) };
         }
@@ -230,12 +228,18 @@ async function ordersummary(req,res){
         if(!parsedQueries.success){
             return res.status(400).json({message : "Check the data and try again"})
         }
-
+        // console.log(parsedQueries.data)
         let Parsedfrom = parsedQueries.data.from
         let parsedto = parsedQueries.data.to
+        if(Parsedfrom ){
+          Parsedfrom.setUTCHours(0,0,0,0)
+        }
+        if(parsedto){
+          parsedto.setUTCHours(23,59,59,999)
+        }
+        
 
-        Parsedfrom.setUTCHours(0,0,0,0)
-        parsedto.setUTCHours(23,59,59,999)
+        
 
 
         if(Parsedfrom>parsedto){
