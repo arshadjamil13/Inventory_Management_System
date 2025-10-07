@@ -67,7 +67,7 @@ The backend is built with **Node.js** and **Express**, using a **modular structu
    - Create a `.env` file in the root directory.
    - Add the following variables:
      ```env
-     PORT=5000
+     PORT=3000
      MONGODB_URI=mongodb://localhost:27017/inventory_db
      JWT_SECRET=your_jwt_secret
      ```
